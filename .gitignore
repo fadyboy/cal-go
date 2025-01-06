@@ -1,0 +1,5 @@
+# ignore application binary
+lenslocked
+
+# auto reloading file
+modd.conf
