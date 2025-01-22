@@ -3,3 +3,7 @@ lenslocked
 
 # auto reloading file
 modd.conf
+
+# example files
+/cmd/exp/*
+
