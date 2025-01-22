@@ -5,5 +5,5 @@ lenslocked
 modd.conf
 
 # example files
-/cmd/exp
+/cmd/exp/*
 
