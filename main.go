@@ -15,6 +15,8 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	var usersC controllers.Users
+
 	tpl := views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))
 
 	r.Get("/", controllers.StaticHandler(tpl))
@@ -30,6 +32,9 @@ func main() {
 	tpl = views.Must(views.ParseFS(templates.FS, "about.gohtml", "tailwind.gohtml"))
 
 	r.Get("/about", controllers.StaticHandler(tpl))
+
+	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
+	r.Get("/signup", usersC.New)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
