@@ -26,7 +26,7 @@ func Parse(templateFilepath string) (Template, error) {
 	htmlTpl, err := template.ParseFiles(templateFilepath)
 	if err != nil {
 		log.Printf("Parsing template: %v", err)
-		return Template{}, fmt.Errorf("Error parsing template %v", err)
+		return Template{}, fmt.Errorf("error parsing template %v", err)
 	}
 
 	return Template{htmlTpl: htmlTpl}, nil
@@ -44,7 +44,7 @@ func ParseFS(fs embed.FS, pattern ...string) (Template, error) {
 	tmpl, err := template.ParseFS(fs, pattern...)
 	if err != nil {
 		log.Printf("parsing template: %v", err)
-		return Template{}, fmt.Errorf("Error parsing template: %v", err)
+		return Template{}, fmt.Errorf("error parsing template: %v", err)
 	}
 
 	return Template{htmlTpl: tmpl}, nil
