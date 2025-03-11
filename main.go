@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/fadyboy/lenslocked/controllers"
+	"github.com/fadyboy/lenslocked/models"
 	"github.com/fadyboy/lenslocked/templates"
 	"github.com/fadyboy/lenslocked/views"
 	"github.com/go-chi/chi/v5"
@@ -15,7 +16,21 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	var usersC controllers.Users
+	// setup db connection
+	cfg := models.DefaultDBConfig()
+	db, err := models.Open(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	userService := models.UserService{
+		DB: db,
+	}
+
+	usersC := controllers.Users{
+		UserService: &userService,
+	}
 
 	tpl := views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))
 
@@ -34,9 +49,9 @@ func main() {
 	r.Get("/about", controllers.StaticHandler(tpl))
 
 	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
-	r.Get("/users/new", usersC.New)
+	r.Get("/signup", usersC.New)
 
-	r.Post("/users/new", usersC.Create)
+	r.Post("/signup", usersC.Create)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
