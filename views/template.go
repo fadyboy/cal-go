@@ -65,12 +65,3 @@ func Must(t Template, err error) Template {
 	return t
 }
 
-// func ParseFS(fs embed.FS, pattern ...string) (Template, error) {
-// 	tmpl, err := template.ParseFS(fs, pattern...)
-// 	if err != nil {
-// 		log.Printf("parsing template: %v", err)
-// 		return Template{}, fmt.Errorf("error parsing template: %v", err)
-// 	}
-//
-// 	return Template{htmlTpl: tmpl}, nil
-// }
