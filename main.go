@@ -10,10 +10,12 @@ import (
 	"github.com/fadyboy/lenslocked/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/gorilla/csrf"
 )
 
 func main() {
 	r := chi.NewRouter()
+
 	r.Use(middleware.Logger)
 
 	// setup db connection
@@ -59,10 +61,21 @@ func main() {
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
 
+	// signed in user
+	r.Get("/users/me", usersC.CurrentUser)
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
 	})
 
+	// csrf
+	csrfKey := "32-byte-long-auth-key"
+	csrfMw := csrf.Protect(
+		[]byte(csrfKey),
+		csrf.Secure(false),
+		csrf.TrustedOrigins([]string{"localhost:3000"}),
+	)
+
 	fmt.Println("Starting the server on port :3000")
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3000", csrfMw(r))
 }
