@@ -3,6 +3,9 @@
   <div class="px-8 py-8 bg-white shadow rounded">
     <h1 class="text-center text-3xl font-bold text-gray-900 pt-4 pb-8">Start sharing your photos today!</h1>
     <form action="/signup" method="POST">
+			<div class="hidden">
+				{{csrfField}}
+			</div>
       <div>
         <label for="email" class="font-semibold text-sm text-gray-800">Email Address:</label>
         <input

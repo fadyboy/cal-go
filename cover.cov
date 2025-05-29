@@ -1,0 +1,6 @@
+mode: set
+github.com/fadyboy/lenslocked/main.go:16.13,31.16 8 0
+github.com/fadyboy/lenslocked/main.go:31.16,32.13 1 0
+github.com/fadyboy/lenslocked/main.go:34.2,74.58 19 0
+github.com/fadyboy/lenslocked/main.go:74.58,76.3 1 0
+github.com/fadyboy/lenslocked/main.go:85.2,86.33 2 0
