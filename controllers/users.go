@@ -17,7 +17,7 @@ type Users struct {
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Email     string
+		Email string
 	}
 	data.Email = r.FormValue("email")
 	u.Templates.New.Execute(w, r, data)
@@ -86,7 +86,7 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	email, err := r.Cookie("email")
 	if err != nil {
 		fmt.Fprint(w, "Email cookie could not be read")
-		return
+		http.Redirect(w, r, "signin.gohtml", http.StatusTemporaryRedirect)
 	}
 
 	fmt.Fprintf(w, "Email cookie: %s\n", email.Value)
