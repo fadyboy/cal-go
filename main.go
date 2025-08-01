@@ -69,6 +69,9 @@ func main() {
 	// signed in user
 	r.Get("/users/me", usersC.CurrentUser)
 
+	// Signout
+	r.Post("/signout", usersC.ProcessSignOut)
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
 	})
