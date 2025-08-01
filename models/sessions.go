@@ -26,7 +26,7 @@ type Session struct {
 
 type SessionService struct {
 	DB *sql.DB
-	// BytesPerToken is used to determine the number of bytes when generating the session token 
+	// BytesPerToken is used to determine the number of bytes when generating the session token
 	// If the value is not set or less than, it will use the MinBytesPerToken
 	BytesPerToken int
 }
@@ -42,8 +42,8 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	}
 
 	session := Session{
-		UserID: userID,
-		Token: token,
+		UserID:    userID,
+		Token:     token,
 		TokenHash: ss.hash(token),
 	}
 
@@ -58,7 +58,7 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	if err == sql.ErrNoRows {
 		// if no rows found, create a new session
 		row = ss.DB.QueryRow(
-		`INSERT INTO sessions (user_id, token_hash)
+			`INSERT INTO sessions (user_id, token_hash)
 		 VALUES ($1, $2)
 		 RETURNING id;`, session.UserID, session.TokenHash)
 
@@ -74,7 +74,7 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 
 func (ss *SessionService) User(token string) (*User, error) {
 	tokenHash := ss.hash(token)
-	
+
 	var user User
 	row := ss.DB.QueryRow(`
 		SELECT user_id FROM sessions
@@ -93,11 +93,27 @@ func (ss *SessionService) User(token string) (*User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("user: %w", err)
 	}
-	
+
 	return &user, nil
 }
 
 func (ss *SessionService) hash(token string) string {
 	tokenHash := sha256.Sum256([]byte(token))
 	return base64.URLEncoding.EncodeToString(tokenHash[:])
+}
+
+func (ss *SessionService) Delete(token string) error {
+	tokenHash := ss.hash(token)
+
+	// delete session from DB
+	_, err := ss.DB.Exec(`
+		DELETE FROM sessions
+		WHERE token_hash = $1;
+		`, tokenHash)
+
+	if err != nil {
+		return fmt.Errorf("error deleting session: %w", err)
+	}
+
+	return nil
 }
