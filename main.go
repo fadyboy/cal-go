@@ -67,6 +67,7 @@ func main() {
 	r.Post("/signin", usersC.ProcessSignIn)
 
 	// signed in user
+	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "current_user.gohtml", "tailwind.gohtml"))
 	r.Get("/users/me", usersC.CurrentUser)
 
 	// Signout
