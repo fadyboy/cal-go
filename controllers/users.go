@@ -12,7 +12,7 @@ type Users struct {
 		New    Template
 		SignIn Template
 	}
-	UserService *models.UserService
+	UserService    *models.UserService
 	SessionService *models.SessionService
 }
 
@@ -85,7 +85,7 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 	}
 
-	setCookie(w, CookieSession, session.Token)	
+	setCookie(w, CookieSession, session.Token)
 
 	http.Redirect(w, r, "/users/me", http.StatusFound)
 }
@@ -104,7 +104,12 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/signup", http.StatusFound)
 	}
 
-	fmt.Fprintf(w, "Current user: %s\n", user.Email)
+	var data struct {
+		Email string
+	}
+	data.Email = user.Email
+	// fmt.Fprintf(w, "Current user: %s\n", user.Email)
+	u.Templates.New.Execute(w, r, data)
 }
 
 func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +125,7 @@ func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 		return
 	}
-	
+
 	deleteCookie(w, CookieSession)
 	http.Redirect(w, r, "/signin", http.StatusFound)
 }
