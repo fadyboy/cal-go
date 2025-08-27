@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/pressly/goose/v3"
 )
 
 type DBConfig struct {
@@ -23,12 +24,12 @@ func (cfg DBConfig) String() string {
 
 func DefaultDBConfig() DBConfig {
 	return DBConfig{
-		Host: "localhost",
-		Port: "5437",
-		User: "lenslock",
+		Host:     "localhost",
+		Port:     "5437",
+		User:     "lenslock",
 		Password: "password",
 		Database: "lenslocked",
-		SSLMode: "disable",
+		SSLMode:  "disable",
 	}
 }
 
@@ -39,4 +40,18 @@ func Open(config DBConfig) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func Migrate(db *sql.DB, dir string) error {
+	err := goose.SetDialect("postgres")
+	if err != nil {
+		return fmt.Errorf("migrate set dialect error: %w", err)
+	}
+
+	err = goose.Up(db, dir)
+	if err != nil {
+		return fmt.Errorf("migrate up error: %w", err)
+	}
+
+	return nil
 }
