@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/fadyboy/lenslocked/controllers"
-	"github.com/fadyboy/lenslocked/models"
-	"github.com/fadyboy/lenslocked/templates"
-	"github.com/fadyboy/lenslocked/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/csrf"
+
+	"github.com/fadyboy/lenslocked/controllers"
+	"github.com/fadyboy/lenslocked/migrations"
+	"github.com/fadyboy/lenslocked/models"
+	"github.com/fadyboy/lenslocked/templates"
+	"github.com/fadyboy/lenslocked/views"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 	defer db.Close()
 
 	// run migrations
-	err = models.Migrate(db, "migrations")
+	err = models.MigrateFS(db, migrations.FS, ".")
 	if err != nil {
 		panic(err)
 	}

@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"io/fs"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/pressly/goose/v3"
@@ -17,6 +18,7 @@ type DBConfig struct {
 	SSLMode  string
 }
 
+// String is used to format the DB connection string
 func (cfg DBConfig) String() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database, cfg.SSLMode)
@@ -53,5 +55,20 @@ func Migrate(db *sql.DB, dir string) error {
 		return fmt.Errorf("migrate up error: %w", err)
 	}
 
+	return nil
+}
+
+func MigrateFS(db *sql.DB, migrationsFS fs.FS, dir string) error {
+	if dir == "" {
+		dir = "."
+	}
+	
+	goose.SetBaseFS(migrationsFS)
+
+	defer func() {
+		// remove FS in case there are other sections of app using goose and don't need FS
+		goose.SetBaseFS(nil)
+	}()
+	
 	return nil
 }
