@@ -77,6 +77,11 @@ func main() {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
 	})
 
+	// middleware for setting user context
+	umw := controllers.UserMiddleWare{
+		SessionService: &sessionService,
+	}
+
 	// csrf
 	csrfKey := "32-byte-long-auth-key"
 	csrfMw := csrf.Protect(
@@ -86,5 +91,5 @@ func main() {
 	)
 
 	fmt.Println("Starting the server on port :3000")
-	http.ListenAndServe(":3000", csrfMw(r))
+	http.ListenAndServe(":3000", csrfMw(umw.SetUser(r)))
 }

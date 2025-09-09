@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/fadyboy/lenslocked/context"
 	"github.com/fadyboy/lenslocked/models"
 )
 
@@ -91,25 +92,13 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	tokenCookie, err := readCookie(r, CookieSession)
-	if err != nil {
-		fmt.Println(err)
+	user := context.User(r.Context())
+	if user == nil {
 		http.Redirect(w, r, "/signin", http.StatusFound)
 		return
 	}
 
-	user, err := u.SessionService.User(tokenCookie)
-	if err != nil {
-		fmt.Println(err)
-		http.Redirect(w, r, "/signup", http.StatusFound)
-	}
-
-	var data struct {
-		Email string
-	}
-	data.Email = user.Email
-	// fmt.Fprintf(w, "Current user: %s\n", user.Email)
-	u.Templates.New.Execute(w, r, data)
+	fmt.Fprintf(w, "current user email: %s", user.Email)
 }
 
 func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
