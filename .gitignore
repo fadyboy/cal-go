@@ -7,3 +7,6 @@ modd.conf
 # example files
 /cmd/exp/*
 
+# env files
+.env
+
