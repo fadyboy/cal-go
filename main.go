@@ -53,6 +53,8 @@ func main() {
 		templates.FS, "signup.gohtml", "tailwind.gohtml"))
 	usersC.Templates.SignIn = views.Must(views.ParseFS(
 		templates.FS, "signin.gohtml", "tailwind.gohtml"))
+	usersC.Templates.ForgotPassword = views.Must(views.ParseFS(
+		templates.FS, "forgot-pw.gohtml", "tailwind.gohtml"))
 
 	// csrf
 	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
@@ -87,6 +89,8 @@ func main() {
 	r.Post("/signin", usersC.ProcessSignIn)
 	r.Post("/signout", usersC.ProcessSignOut)
 	r.Get("/users/me", usersC.CurrentUser)
+	r.Get("/forgot-pw", usersC.ForgotPassword)
+	r.Post("/forgot-pw", usersC.ProcessForgotPassword)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page Not Found", http.StatusNotFound)
 	})
